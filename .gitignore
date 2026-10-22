@@ -1,0 +1,27 @@
+build/bin
+node_modules
+
+# dist 为生成物，但必须提交 index.html 占位，
+# 保证 npm 构建前 //go:embed all:frontend/dist 仍能通过
+frontend/dist/*
+!frontend/dist/index.html
+
+# build output
+*.exe
+*.exe~
+bin/
+
+# 编辑器与工具目录
+.idea/
+.vscode/
+*.iml
+frontend/package.json.md5
+
+# .NET / 构建缓存
+*.dll
+*.pdb
+obj/
+*.cache
+
+# wails build 副产物（trimpath 清单，可再生）
+build/trim.txt

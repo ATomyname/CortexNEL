@@ -1,0 +1,455 @@
+/* =====================================================================
+ * CortexNEL 设计 token —— Apple HIG 视觉规范。
+ * 变量挂载于根元素 class（theme-light / theme-dark，由 lib/theme.ts 切换），
+ * 组件只读变量不写死颜色；antd 组件色板见 lib/antdTheme.ts。
+ * ===================================================================== */
+
+:root {
+  --n-font: -apple-system, "SF Pro Text", "PingFang SC", "Helvetica Neue", "Microsoft YaHei UI", sans-serif;
+  --n-mono: "SF Mono", ui-monospace, "JetBrains Mono", Consolas, Menlo, monospace;
+  --n-motion: 0.18s cubic-bezier(0.25, 0.1, 0.25, 1);
+  --n-radius: 10px;
+  --n-radius-lg: 12px;
+  --n-radius-sm: 8px;
+  --n-blue: #007aff;
+  --n-green: #34c759;
+  --n-orange: #ff9500;
+  --n-red: #ff3b30;
+  --n-purple: #af52de;
+  --n-teal: #5ac8fa;
+  --n-indigo: #5856d6;
+
+  /* 系统色半透明色调：图标底、选中态、标签底等"淡色块"统一从这里取，
+     组件不再各写一份 rgba（规范 U2：硬编码背景色禁止）。 */
+  --n-blue-tint: rgba(0, 122, 255, 0.12);
+  --n-green-tint: rgba(52, 199, 89, 0.12);
+  --n-purple-tint: rgba(175, 82, 222, 0.12);
+  /* 图片上的中性遮罩（封面徽标、悬浮条）：压在图片上的那层暗化。 */
+  --n-scrim: rgba(0, 0, 0, 0.6);
+}
+
+.theme-light {
+  --n-bg: #f5f5f7;
+  --n-surface: #ffffff;
+  --n-surface-subtle: rgba(0, 0, 0, 0.02);
+  --n-text: #1d1d1f;
+  --n-text-2: rgba(60, 60, 67, 0.60);
+  --n-text-3: rgba(60, 60, 67, 0.33);
+  --n-separator: rgba(60, 60, 67, 0.12);
+  --n-separator-strong: rgba(60, 60, 67, 0.22);
+  --n-glass: rgba(255, 255, 255, 0.72);
+  --n-glass-border: rgba(255, 255, 255, 0.45);
+  --n-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --n-terminal-bg: #1c1c1e;
+  --n-terminal-text: #f5f5f7;
+  --n-terminal-border: rgba(255, 255, 255, 0.08);
+}
+
+.theme-dark {
+  --n-bg: #111113;
+  --n-surface: #1c1c1e;
+  --n-surface-subtle: rgba(255, 255, 255, 0.03);
+  --n-text: #f5f5f7;
+  --n-text-2: rgba(235, 235, 245, 0.60);
+  --n-text-3: rgba(235, 235, 245, 0.33);
+  --n-separator: rgba(84, 84, 88, 0.40);
+  --n-separator-strong: rgba(84, 84, 88, 0.65);
+  --n-glass: rgba(20, 20, 22, 0.72);
+  --n-glass-border: rgba(255, 255, 255, 0.08);
+  --n-card-shadow: none;
+  --n-terminal-bg: #0a0a0c;
+  --n-terminal-text: #f5f5f7;
+  --n-terminal-border: rgba(84, 84, 88, 0.45);
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--n-font);
+  background: var(--n-bg);
+  color: var(--n-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--n-motion), color var(--n-motion);
+  user-select: none;
+}
+
+/* ---------- 滚动条规范（极简、细窄、克制） ---------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 128, 0.28);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 120, 128, 0.48);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- 基础页面骨架 ---------- */
+.page {
+  padding: 24px 28px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--n-text);
+}
+
+.page-desc {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--n-text-2);
+}
+
+.mb {
+  margin-bottom: 16px;
+}
+
+.mb-sm {
+  margin-bottom: 10px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.card-sub {
+  font-size: 12px;
+  color: var(--n-text-2);
+  font-weight: 400;
+}
+
+/* ---------- Apple 毛玻璃特效 ---------- */
+.glass {
+  background: var(--n-glass);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* ---------- 终端面板（日志流与控制台） ---------- */
+.terminal-panel {
+  background: var(--n-terminal-bg);
+  color: var(--n-terminal-text);
+  border: 1px solid var(--n-terminal-border);
+  border-radius: var(--n-radius);
+  font-family: var(--n-mono);
+  font-size: 12px;
+  line-height: 1.65;
+  padding: 12px 14px;
+  overflow-y: auto;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.terminal-panel .log-line {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  word-break: break-all;
+  white-space: pre-wrap;
+  padding: 1px 0;
+}
+
+.log-ts {
+  color: rgba(235, 235, 245, 0.38);
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.log-mod {
+  color: #64d2ff;
+  flex-shrink: 0;
+  min-width: 90px;
+  font-size: 11.5px;
+}
+
+.log-lvl {
+  flex-shrink: 0;
+  width: 48px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.log-msg {
+  color: rgba(245, 245, 247, 0.92);
+}
+
+.log-msg.lvl-warn,
+.log-line.lvl-warn .log-msg {
+  color: #ff9f0a;
+}
+
+.log-msg.lvl-error,
+.log-line.lvl-error .log-msg {
+  color: #ff453a;
+  font-weight: 600;
+}
+
+.terminal-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(235, 235, 245, 0.45);
+  padding: 16px 4px;
+  font-size: 12px;
+}
+
+.terminal-prompt {
+  color: #0a84ff;
+  font-weight: 700;
+}
+
+/* ---------- 中继拓扑图 (Topology) ---------- */
+.topo-container {
+  padding: 14px 18px;
+  background: var(--n-surface-subtle);
+  border: 1px solid var(--n-separator);
+  border-radius: var(--n-radius-lg);
+  margin-bottom: 16px;
+}
+
+.topo-flow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.topo-node {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 170px;
+  max-width: 250px;
+  padding: 12px 14px;
+  border-radius: var(--n-radius);
+  border: 1px solid var(--n-separator);
+  background: var(--n-surface);
+  box-shadow: var(--n-card-shadow);
+}
+
+.topo-node-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.topo-node-icon.client {
+  background: rgba(52, 199, 89, 0.12);
+  color: var(--n-green);
+}
+
+.topo-node-icon.relay {
+  background: rgba(0, 122, 255, 0.12);
+  color: var(--n-blue);
+}
+
+.topo-node-icon.target {
+  background: rgba(255, 149, 0, 0.14);
+  color: var(--n-orange);
+}
+
+.topo-node-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topo-node-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topo-node-sub {
+  font-size: 11.5px;
+  color: var(--n-text-2);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topo-edge {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  height: 48px;
+}
+
+.topo-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+.topo-edge.client-leg .topo-line {
+  background: repeating-linear-gradient(90deg, var(--n-green) 0 6px, transparent 6px 10px);
+}
+
+.topo-edge.server-leg .topo-line {
+  background: var(--n-orange);
+}
+
+.topo-edge-tag {
+  position: relative;
+  z-index: 1;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.topo-edge.client-leg .topo-edge-tag {
+  color: var(--n-green);
+  background: rgba(52, 199, 89, 0.12);
+  border: 1px solid rgba(52, 199, 89, 0.25);
+}
+
+.topo-edge.server-leg .topo-edge-tag {
+  color: var(--n-orange);
+  background: rgba(255, 149, 0, 0.12);
+  border: 1px solid rgba(255, 149, 0, 0.25);
+}
+
+.topo-note {
+  font-size: 11px;
+  color: var(--n-text-3);
+  margin-top: 2px;
+}
+
+/* ---------- 通用防挤压与自适应保护 ---------- */
+.ant-table-wrapper {
+  max-width: 100%;
+}
+
+.ant-table-thead > tr > th {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+}
+
+.ant-table-tbody > tr > td {
+  word-break: normal;
+}
+
+.ant-tag {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+}
+
+.ant-badge {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+}
+
+.ant-statistic-content-suffix {
+  white-space: nowrap;
+}
+
+/* ---------- 设置行规范 ---------- */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--n-separator);
+  min-height: 56px;
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+  padding-bottom: 4px;
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-title {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--n-text);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.setting-desc {
+  display: block;
+  font-size: 12px;
+  color: var(--n-text-2);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.setting-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* ---------- 响应式断点 ---------- */
+@media (max-width: 900px) {
+  .page {
+    padding: 16px 16px 32px;
+  }
+  .topo-flow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .topo-node {
+    max-width: 100%;
+  }
+  .topo-edge {
+    height: 32px;
+  }
+}

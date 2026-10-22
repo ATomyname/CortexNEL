@@ -1,0 +1,61 @@
+name: CI
+
+# 判据单源在 scripts/check.ps1 与 scripts/check-slop.ps1，本文件只装配运行环境。
+# 精简策略：单 job、最小权限、同分支新推送自动取消旧运行、纯文档改动不触发。
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: 检查（L0/L1 + 门禁 + 前端类型）
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: 安装 Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: 安装 Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # gofmt / go vet / go test / 行数禁线 / P1 引擎中立 / 命名禁令 / 凭据扫描
+      - name: 确定性门禁
+        shell: pwsh
+        run: ./scripts/check.ps1
+
+      # 界面 Emoji（fail）/ 硬编码颜色 / 中文套话 / 占位标记 / 预留 seam
+      - name: 反 AI 垃圾检查
+        shell: pwsh
+        run: ./scripts/check-slop.ps1
+
+      - name: 安装前端依赖
+        working-directory: frontend
+        run: npm ci
+
+      - name: 前端类型检查
+        working-directory: frontend
+        run: npm run typecheck
